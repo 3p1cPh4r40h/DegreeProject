@@ -1,8 +1,11 @@
 # DegreeProject
 Using artificial neural networks to transcribe chords over time and find the key from an audio recording.
 
-The goal of our project is to use a categorization neural network on segmented fast fourier transforms from audio to find notes, the notes to find the key, and then
-to label the chords in the song accordingly.
+Goals for the project:
+- Segmented fast fourier transforms (spectrograms) on audio
+- Categorization neural network on spectrograms to find notes
+- Categorization neural network on notes to find key
+- Algorithm to label chords in song according to key
 
 Breaking this down we start with chords, or combinations of notes. Musicians often use multiple notes at once when writing music, this concept is known as polyphany,
 and these combinations of notes are called chords. The chords over the course of a song will typically define a progression through a scale (a set of notes which are

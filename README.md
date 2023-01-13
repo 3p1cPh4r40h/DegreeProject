@@ -9,7 +9,7 @@ Goals for the project:
 
 Breaking this down we start with chords, or combinations of notes. Musicians often use multiple notes at once when writing music, this concept is known as polyphany,
 and these combinations of notes are called chords. The chords over the course of a song will typically define a progression through a scale (a set of notes which are
-known to sound good together). Important to note is that scales are subjective in nature, and often when multiple scales can be chosen the choice is based on 
+known to sound good together). *Important to note*, is that scales are subjective in nature, and often when multiple scales can be chosen the choice is based on 
 readability for the musician. Scales and notes are denoted by the letters A to G, and the set of notes represent a set of pitches defined by a logarithmic equation.
 
 Our goal is to use fast fourier transforms to generate a spectrogram (an amplitude of pitch over time graph), discretize this spectrogram so that each unit represents 

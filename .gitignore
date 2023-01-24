@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+train_df.pkl
+test_df.pkl

@@ -2,14 +2,10 @@
 
 import pandas as pd
 import numpy as np
+import librosa
 
 class Ear:
 
-    # Equivalent rectangular bandwidth (ERB) table holds bandwidth of 
-    # human ear (used for filtering)
-    tableERB = pd.DataFrame()
-    # Variable for holding audio adjusted to human hearing bandwidth
-    adjustedAudio = None
 
     def __init__(self, audio):
     # Takes Librosa audio file
@@ -23,24 +19,19 @@ class Ear:
     # Get audio from ear
         return self.audio
 
-
-    def criticalBand(self):
-    # Filter audio with ERB
-    
-        self.adjustedAudio = self.audio * self.tableERB
-        return self.adjustedAudio
-
-
-    def melScaleSpec(self):
+    def melScaleSpec(self, audio, sr):
     # Create Mel Scale Spectrogram from audio
         
-        melSpec = self.adjustedAudio
+        melSpec = librosa.feature.melspectrogram(audio, sr=sr, n_mels=128, fmax=8000)
         return melSpec
 
-    def melScaleCepstralCoefficients(self):
+    def melScaleCepstralCoefficients(self, audio, sr):
     # Find Mel Scale Cepstral Coefficients (correlated to tambre) for a song
 
-        melCepstralCoeff = self.adjustedAudio
+        # Compute the MFCCs
+        melCepstralCoeff = librosa.feature.mfcc(audio, sr=sr, n_mfcc=13)
+        # Normalize the MFCCs
+        melCepstralCoeff = np.mean(melCepstralCoeff, axis=1)
         return melCepstralCoeff
 
     def getSpectrograms(self):

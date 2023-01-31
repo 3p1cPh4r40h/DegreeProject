@@ -1,30 +1,60 @@
 # Class GUI_Interface: Holds the functions that are called by the GUI
 
-import numpy as np
+import AudioProcessor as ap
+import Transcriber as ts
+import librosa 
 
 class GUI_Interface:
 
-    def __init__(self, audio1, audio2, ear, transcribe):
-    # GUI has a placeholder for two audio files and an ear and transcribe object
-        self.audio1 = audio1
-        self.audio2 = audio2
-        self.ear = ear(audio1)
-        self.transcribe = transcribe(ear)
+    audio1 = None
+    audio2 = None
 
-    def transcribeAudio(self):
+    def __init__(self):
+    # Empty constructor only initilizes AudioProcessor and Transcriber
+        self.ap = ap()
+        self.ts = ts()
+    
+    def __init__(self, audio1, audio2):
+    # GUI has a placeholder for two audio files,
+    # an AudioProcessor object, and a Transcriber object
+        self.audio1 = librosa.load(audio1)
+        self.audio2 = librosa.load(audio2)
+        self.ap = ap()
+        self.ts = ts()
+
+
+
+    # Set and get functions
+    def setAudio1(self, audio):
+    # Set audio for processing
+        self.audio1 = audio
+
+    def getAudio1(self):
+    # Get audio from GUI interface
+        return self.audio1
+
+    def setAudio2(self, audio):
+    # Set audio for processing
+        self.audio2 = audio
+
+    def getAudio2(self):
+    # Get audio from GUI interface
+        return self.audio2
+
+
+
+    # Interfacing functions for the GUI driver.py
+    def getTranscribedAudio(self):
     # Transcribe the audio and return the results
-        notes = self.transcribe.findNotes()
-        key = self.transcribe.findKey()
-        chords = self.transcribe.findChords()
-        notesKeyChords = np.asarray([notes, key, chords])
-        return notesKeyChords
+        chords = self.ts.findChords(self.audio1)
+        return chords
 
-    def compareSpectrograms(self):
+    def getComparedSpectrograms(self):
     # Create spectrogram of both audio files and compare them
-        spectrogram1 = self.ear.melScaleSpec()
-        self.ear.setAudio(self.audio2)
-        spectrogram2 = self.ear.melScaleSpec()
-        self.ear.setAudio(self.audio1)
+        spectrogram1 = self.ap.melScaleSpec()
+        self.ap.setAudio(self.audio2)
+        spectrogram2 = self.ap.melScaleSpec()
+        self.ap.setAudio(self.audio1)
         layeredSpectrogram = spectrogram1 - spectrogram2
         return layeredSpectrogram
 

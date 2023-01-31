@@ -1,39 +1,42 @@
-# Class Ear: Listens to audio and creates spectrograms
+# Class AudioProcessor: Listens to audio and creates spectrograms
 
-import pandas as pd
 import numpy as np
 import librosa
 
-class Ear:
+class AudioProcessor:
 
-    audio = np.array
+    audio = None
 
     def __init__(self):
         pass
 
     def __init__(self, audio):
-    # This constructor sets the audio for ear.
+    # This constructor sets the audio for processing.
         self.audio = audio
     
     def setAudio(self, audio):
-    # Set audio to be listened to by ear
+    # Set audio for processing
         self.audio = audio
 
     def getAudio(self):
-    # Get audio from ear
+    # Get audio from AudioProcessor object
         return self.audio
 
-    def melScaleSpec(self, audio, sr):
+    def melScaleSpec(self):
     # Create Mel Scale Spectrogram from audio
         
-        melSpec = librosa.feature.melspectrogram(audio, sr=sr, n_mels=128, fmax=8000)
+        # 22050 is the default sample rate for librosa
+        # and is the SR for all audio we use in this project
+        melSpec = librosa.feature.melspectrogram(self.audio, sr=22050, n_mels=128, fmax=8000)
         return melSpec
 
-    def melScaleCepstralCoefficients(self, audio, sr):
+    def melScaleCepstralCoefficients(self):
     # Find Mel Scale Cepstral Coefficients (correlated to tambre) for a song
 
+        # 22050 is the default sample rate for librosa
+        # and is the SR for all audio we use in this project
         # Compute the MFCCs
-        melCepstralCoeff = librosa.feature.mfcc(audio, sr=sr, n_mfcc=13)
+        melCepstralCoeff = librosa.feature.mfcc(self.audio, sr=22050, n_mfcc=128)
         # Normalize the MFCCs
         melCepstralCoeff = np.mean(melCepstralCoeff, axis=1)
         return melCepstralCoeff

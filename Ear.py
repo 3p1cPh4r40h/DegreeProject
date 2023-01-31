@@ -6,11 +6,15 @@ import librosa
 
 class Ear:
 
+    audio = np.array
+
+    def __init__(self):
+        pass
 
     def __init__(self, audio):
-    # Takes Librosa audio file
-        audio = self.audio        
-
+    # This constructor sets the audio for ear.
+        self.audio = audio
+    
     def setAudio(self, audio):
     # Set audio to be listened to by ear
         self.audio = audio

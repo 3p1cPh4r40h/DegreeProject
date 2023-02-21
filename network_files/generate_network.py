@@ -1,22 +1,22 @@
 import pickle
-from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
+from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, ThresholdedReLU
 from keras.models import Sequential
 import matplotlib.pyplot as plt
 
 # Load the preprocessed data from the pickle files
-with open('x_train.pkl', 'rb') as f:
+with open('network_files/x_train.pkl', 'rb') as f:
     x_train = pickle.load(f)
-with open('y_train.pkl', 'rb') as f:
+with open('network_files/y_train.pkl', 'rb') as f:
     y_train = pickle.load(f)
-with open('x_val.pkl', 'rb') as f:
+with open('network_files/x_val.pkl', 'rb') as f:
     x_val = pickle.load(f)
-with open('y_val.pkl', 'rb') as f:
+with open('network_files/y_val.pkl', 'rb') as f:
     y_val = pickle.load(f)
-with open('x_test.pkl', 'rb') as f:
+with open('network_files/x_test.pkl', 'rb') as f:
     x_test = pickle.load(f)
-with open('y_test.pkl', 'rb') as f:
+with open('network_files/y_test.pkl', 'rb') as f:
     y_test = pickle.load(f)
-with open('label_set.pkl', 'rb') as f:
+with open('network_files/label_set.pkl', 'rb') as f:
     label_set = pickle.load(f)
 
 x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], x_train.shape[2], 1)
@@ -37,7 +37,7 @@ model.add(Dense(len(label_set), activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Train the model
-history = model.fit(x_train, y_train, epochs=100, batch_size=32, validation_data=(x_val, y_val))
+history = model.fit(x_train, y_train, epochs=100, batch_size=16, validation_data=(x_val, y_val))
 
 
 # Plot the training and validation accuracy over the training epochs
@@ -63,10 +63,9 @@ plt.show()
 
 
 # Save the model
-model.save('model.h5')
+model.save('network_files/model100epochs.h5')
 
 # Evaluate the model on the test data
 test_loss, test_acc = model.evaluate(x_test, y_test)
 print('Test loss:', test_loss)
 print('Test accuracy:', test_acc)
-

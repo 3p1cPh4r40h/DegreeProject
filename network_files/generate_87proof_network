@@ -48,7 +48,7 @@ plt.title('Model accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Validation'], loc='upper left')
-plt.savefig('accuracy_plotxproof.png')
+plt.savefig('model_results/accuracy_plot87proof.png')
 plt.show()
 
 # Plot the training and validation loss over the training epochs
@@ -58,13 +58,13 @@ plt.title('Model loss')
 plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Validation'], loc='upper left')
-plt.savefig('loss_plotxproof.png')
+plt.savefig('model_results/loss_plot87proof.png')
 plt.show()
 
 
 
 # Save the model
-model.save('network_files/modelxproof.h5')
+model.save('network_files/model87proof.h5')
 
 # Evaluate the model on the test data
 test_loss, test_acc = model.evaluate(x_test, y_test)

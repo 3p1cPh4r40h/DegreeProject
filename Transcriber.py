@@ -20,7 +20,7 @@ class Transcriber:
 
     def chopAudio(self, audio):
         # Chops audio into 1 second segments
-        sr = 22050
+        sr = 24775
         # Load audio file using librosa
         # Compute the number of 1-second segments in the audio
         num_segments = int(np.ceil(len(audio) / sr))

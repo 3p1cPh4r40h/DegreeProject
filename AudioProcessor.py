@@ -2,7 +2,6 @@
 
 import numpy as np
 import librosa
-import tensorflow as tf
 
 class AudioProcessor:
 
@@ -52,8 +51,8 @@ class AudioProcessor:
     # Returns array with spectrogram and cepstral coefficients
         mspec = self.melScaleSpec()
         mfcc = self.melScaleCepstralCoefficients()
-        
-        spectrograms = np.concatenate((mspec, mfcc), axis=1)
+        spectrograms = [mspec, mfcc]
+        spectrograms = np.concatenate(([mspec], [mfcc]), axis=2)
         spectrograms = spectrograms.reshape(spectrograms.shape[0], spectrograms.shape[1], spectrograms.shape[2], 1)
 
         return spectrograms

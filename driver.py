@@ -3,7 +3,6 @@ from tkinter import filedialog
 from GUI_Interface import GUI_Interface
 import numpy as np
 from PIL import Image, ImageTk
-import librosa
 
 class GUI(tk.Frame):
     def __init__(self, master=None):

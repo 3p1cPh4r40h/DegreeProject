@@ -4,6 +4,10 @@ from GUI_Interface import GUI_Interface
 import numpy as np
 from PIL import Image, ImageTk
 
+import librosa
+from librosa import display
+import matplotlib.pyplot as plt
+
 class GUI(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -11,6 +15,7 @@ class GUI(tk.Frame):
         self.master.title("Audio Processing GUI")
         self.gui_interface = GUI_Interface()
         self.create_widgets()
+        self.image = None
 
     def create_widgets(self):
         # Transcribe button and label
@@ -29,7 +34,9 @@ class GUI(tk.Frame):
 
         # Output text
         self.output_text = tk.Text(self.master, height=10)
+        self.output_text.config(state="normal")
         self.output_text.pack(side="top", pady=5)
+
 
     def get_transcribed_audio(self):
         # Prompt user to select audio file
@@ -54,20 +61,18 @@ class GUI(tk.Frame):
                 # Get compared spectrograms and display them
                 spectrogram = self.gui_interface.getComparedSpectrograms()
                 self.output_text.delete("1.0", tk.END)
-                self.output_text.image_create(tk.END, image=self.convert_to_image(spectrogram))
+                self.convert_to_image(spectrogram)
+                self.output_text.image_create(tk.END, image=self.image)
 
     def convert_to_image(self, spectrogram):
         # Convert spectrogram to tkinter image
-        # Normalize the spectrogram to a range of 0-255
-        spectrogram -= np.min(spectrogram)
-        spectrogram /= np.max(spectrogram)
         spectrogram *= 255
-
+        spectrogram = np.abs(255 - spectrogram)
         # Convert the spectrogram to a PIL image
-        image = Image.fromarray(spectrogram.astype(np.uint8)).convert("RGB")
-
+        image = Image.fromarray(np.uint8(spectrogram)).convert("RGB")
+        image.show()
         # Convert the PIL image to a Tkinter image and return it
-        return ImageTk.PhotoImage(image)
+        self.image = ImageTk.PhotoImage(image)
 
 if __name__ == "__main__":
     root = tk.Tk()

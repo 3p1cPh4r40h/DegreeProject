@@ -3,11 +3,9 @@
 from AudioProcessor import AudioProcessor as ap
 from Transcriber import Transcriber as ts
 import librosa 
+import numpy as np
 
 class GUI_Interface:
-
-    audio1 = None
-    audio2 = None
 
     def __init__(self, audio1=None, audio2=None):
     # GUI has a placeholder for two audio files,
@@ -59,10 +57,20 @@ class GUI_Interface:
 
     def getComparedSpectrograms(self):
     # Create spectrogram of both audio files and compare them
+        self.ap.setAudio(self.audio1)
         spectrogram1 = self.ap.melScaleSpec()
         self.ap.setAudio(self.audio2)
         spectrogram2 = self.ap.melScaleSpec()
-        self.ap.setAudio(self.audio1)
+        
+        # Determine the maximum length along the second axis
+        max_length = max(spectrogram1.shape[1], spectrogram2.shape[1])
+
+        # Pad arrays to maximum length along second axis
+        spectrogram1 = np.pad(spectrogram1, ((0, 0), (0, max_length - spectrogram1.shape[1])), 'constant')
+        spectrogram2 = np.pad(spectrogram2, ((0, 0), (0, max_length - spectrogram2.shape[1])), 'constant')
+
+        # subtract spectrograms for comparison
         layeredSpectrogram = spectrogram1 - spectrogram2
+
         return layeredSpectrogram
 

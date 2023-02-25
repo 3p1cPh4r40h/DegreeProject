@@ -6,14 +6,13 @@ import numpy as np
 
 class Transcriber:
 
-    chords = [] # List for holding the transcribed chords over time
-    network = keras.models.load_model('network_files/model90proof.h5') #Import Network
-    ap = ap() # AudioProcessor object used to find spectrograms
-    audio = []
-
     def __init__(self, audio=None):
     # This constructor sets the audio for processing.
         self.audio = audio
+        self.network = keras.models.load_model('network_files/model90proof.h5') #Import Network
+        self.ap = ap() # AudioProcessor object used to find spectrograms
+        self.chords = []
+        self.audio = []
     
     def setAudio(self, audio):
         self.audio = audio

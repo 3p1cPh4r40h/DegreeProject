@@ -5,8 +5,6 @@ import librosa
 
 class AudioProcessor:
 
-    audio = []
-
     def __init__(self, audio=None):
     # This constructor sets the audio for processing.
     # Audio is optional and can be added later.
@@ -26,11 +24,13 @@ class AudioProcessor:
         # 22050 is the default sample rate for librosa
         # and is the SR for all audio we use in this project
         melSpec = librosa.feature.melspectrogram(self.audio, sr=22050, n_mels=128, fmax=8000)
+        
         # Normalize the spectrogram
         min = np.min(melSpec)
         max = np.max(melSpec)
         for i in range(len(melSpec)):
             melSpec[i] = (melSpec[i] - min) / (max - min)
+
         return melSpec
 
     def melScaleCepstralCoefficients(self):
@@ -49,10 +49,11 @@ class AudioProcessor:
 
     def getSpectrograms(self):
     # Returns array with spectrogram and cepstral coefficients
-        mspec = self.melScaleSpec()
+        melSpec = self.melScaleSpec()
         mfcc = self.melScaleCepstralCoefficients()
-        spectrograms = [mspec, mfcc]
-        spectrograms = np.concatenate(([mspec], [mfcc]), axis=2)
+
+        spectrograms = [melSpec, mfcc]
+        spectrograms = np.concatenate(([melSpec], [mfcc]), axis=2)
         spectrograms = spectrograms.reshape(spectrograms.shape[0], spectrograms.shape[1], spectrograms.shape[2], 1)
 
         return spectrograms

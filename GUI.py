@@ -62,11 +62,8 @@ class GUI(tk.Frame):
 
         # Prompt user to select two audio files
         file_path1 = filedialog.askopenfilename(filetypes=[("WAV files", "*.wav")])
-
         if file_path1:
-
             file_path2 = filedialog.askopenfilename(filetypes=[("WAV files", "*.wav")])
-
             if file_path2:
 
                 # Display loading message

@@ -22,33 +22,46 @@ class GUI_Interface:
 
 
     # Set and get functions
+
+
     def setAudio1(self, audio):
+
     # Set audio for processing
         a1, _ = librosa.load(audio)
         self.audio1 = a1
 
     def getAudio1(self):
+
     # Get audio from GUI interface
         return self.audio1
 
     def setAudio2(self, audio):
+
     # Set audio for processing
         a2, _ = librosa.load(audio)
         self.audio2 = a2
 
     def getAudio2(self):
+
     # Get audio from GUI interface
         return self.audio2
 
     def remove_consecutive_duplicates(self, list):
+
         new_list = []
         for i, item in enumerate(list):
             if i == 0 or item != list[i-1]:
                 new_list.append(item)
+
         return new_list
 
+
+
     # Interfacing functions for the GUI driver.py
+
+
     def getTranscribedAudio(self):
+
     # Transcribe the audio and return a list of chords
         self.ts.setAudio(self.audio1)
         chords = self.ts.findChords()
@@ -56,6 +69,7 @@ class GUI_Interface:
         return chords
 
     def getComparedSpectrograms(self):
+        
     # Create spectrogram of both audio files and compare them
         self.ap.setAudio(self.audio1)
         spectrogram1 = self.ap.melScaleSpec()

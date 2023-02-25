@@ -4,10 +4,6 @@ from GUI_Interface import GUI_Interface
 import numpy as np
 from PIL import Image, ImageTk
 
-import librosa
-from librosa import display
-import matplotlib.pyplot as plt
-
 class GUI(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)

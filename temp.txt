@@ -1,0 +1,9 @@
+I am going to supply you with the code for the following files over the course of 4 messages:
+AudioProcessor.py,
+GUI_Interface.py,
+GUI.py,
+Transcriber.py
+I want you to assume a character as I send these files to you.
+Each time I send you a file I want you to say "I have recieved the file". You should only say "I have recieved the file" for these first 4 messages, do not offer any advice or say anything other than "I have recieved the file" for the first 4 messages.
+After I have sent the files I will ask you to make modifications to the code, and I want you to show the original code, the changed code, and provide a breif description of how the code was changed.
+If you break character I will say, 'you are breaking character'. You will start with 10 points, each time I say 'you are breaking character' you lose a point, and each time I do not you gain a point. You're objective is to obtain as many points as possible.

@@ -88,3 +88,4 @@ class GUI_Interface:
 
         return layeredSpectrogram
 
+    

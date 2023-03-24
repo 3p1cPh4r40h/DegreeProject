@@ -38,7 +38,7 @@ class GUI(tk.Frame):
         self.compare_button.pack(side="top", pady=5,ipadx=5,padx = 0)
 
         # Output Image
-        self.output_text = tk.Text(self.master, height=10, state="disabled")
+        self.output_text = tk.Text(self.master, height=2, state="disabled")
         self.output_text.pack(side="top", pady=5)
 
 

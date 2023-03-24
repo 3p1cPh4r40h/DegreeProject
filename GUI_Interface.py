@@ -92,7 +92,19 @@ class GUI_Interface:
 
 
     #function to get the score of similarity between spectrograms todo: use more advanced comparison
-    def getComparedScore(spec1, spec2):
+    def getComparedScore(self):
+
+        self.ap.setAudio(self.audio1)
+        spec1 = self.ap.melScaleSpec()
+        self.ap.setAudio(self.audio2)
+        spec2 = self.ap.melScaleSpec()
+        
+        # Determine the maximum length along the second axis
+        max_length = max(spec1.shape[1], spec2.shape[1])
+
+        # Pad arrays to maximum length along second axis
+        spec1 = np.pad(spec1, ((0, 0), (0, max_length - spec1.shape[1])), 'constant')
+        spec2 = np.pad(spec2, ((0, 0), (0, max_length - spec2.shape[1])), 'constant')
 
         #normalize the spectrograms
         spec1 = (spec1 - np.mean(spec1)) / np.std(spec1)
@@ -103,5 +115,5 @@ class GUI_Interface:
 
         #the similarity is equal to the maximum value of the cross correlation
         similarity = np.max(crosscor)
-
+        
         return similarity

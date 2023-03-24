@@ -4,6 +4,8 @@ from AudioProcessor import AudioProcessor as ap
 from Transcriber import Transcriber as ts
 import librosa 
 import numpy as np
+from scipy.signal import correlate2d
+
 
 class GUI_Interface:
 
@@ -88,4 +90,18 @@ class GUI_Interface:
 
         return layeredSpectrogram
 
-    
+
+    #function to get the score of similarity between spectrograms todo: use more advanced comparison
+    def getComparedScore(spec1, spec2):
+
+        #normalize the spectrograms
+        spec1 = (spec1 - np.mean(spec1)) / np.std(spec1)
+        spec2 = (spec2 - np.mean(spec2)) / np.std(spec2)
+
+        #get the cross correlation between them
+        crosscor = correlate2d(spec1, spec2, mode='same')
+
+        #the similarity is equal to the maximum value of the cross correlation
+        similarity = np.max(crosscor)
+
+        return similarity

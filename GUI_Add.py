@@ -13,25 +13,27 @@ class GUI(tk.Frame):
         self.master.title("Audio Processing GUI")
         self.gui_interface = GUI_Interface()
         self.image = None
-        self.master.configure(background='black')
+        self.master.configure(background='light blue')
 
         self.create_widgets()
 
     def create_widgets(self):
 
         # Transcribe button and label
-        self.transcribe_label = tk.Label(self.master, text="Transcribed Chords:")
-        self.transcribe_button = tk.Button(self.master, text="Transcribe", command=self.get_transcribed_audio)
-        self.transcribe_label.pack(side="top", pady=10)
-        self.transcribe_button.pack(side="top", pady=5)
+        self.transcribe_label = tk.Label(self.master, text="Transcribed Chords:",bg = "light blue")
+        self.transcribe_button = tk.Button(self.master, text="Transcribe", command=self.get_transcribed_audio,fg="white",bg = "blue")
+        self.transcribe_label.pack(side="top", pady=10,ipadx=5)
+        self.transcribe_button.pack(side="top", pady=5,ipadx=5)
+
         # Output text
         self.transcribe_output_text = tk.Text(self.master, height=3, state="disabled")
         self.transcribe_output_text.pack(side="top", pady=5)
+
         # Compare button and label
-        self.compare_label = tk.Label(self.master, text="Layered Spectrogram:")
-        self.compare_button = tk.Button(self.master, text="Compare", command=self.get_compared_spectrograms)
-        self.compare_label.pack(side="top", pady=10)
-        self.compare_button.pack(side="top", pady=5)
+        self.compare_label = tk.Label(self.master, text="Layered Spectrogram:",bg = "light blue")
+        self.compare_button = tk.Button(self.master, text="Compare", command=self.get_compared_spectrograms,fg="white",bg = "blue")
+        self.compare_label.pack(side="top", pady=10,ipadx=5,padx = 0)
+        self.compare_button.pack(side="top", pady=5,ipadx=5,padx = 0)
 
         # Output Image
         self.output_text = tk.Text(self.master, height=10, state="disabled")

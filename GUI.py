@@ -1,8 +1,12 @@
 import tkinter as tk
 from tkinter import filedialog
 from GUI_Interface import GUI_Interface
-import numpy as np
-from PIL import Image, ImageTk
+from librosa import display
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
+
 
 class GUI(tk.Frame):
 
@@ -12,7 +16,6 @@ class GUI(tk.Frame):
         self.master = master
         self.master.title("Audio Processing GUI")
         self.gui_interface = GUI_Interface()
-        self.image = None
         self.create_widgets()
 
     def create_widgets(self):
@@ -33,6 +36,13 @@ class GUI(tk.Frame):
         self.output_text = tk.Text(self.master, height=10, state="disabled")
         self.output_text.pack(side="top", pady=5)
 
+        # Matplotlib canvas
+        self.fig, self.ax = plt.subplots()
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)
+        self.canvas.get_tk_widget().pack(side='bottom', fill='both', expand=True)
+        # Add navigation toolbar
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self.master)
+        self.toolbar.update()
 
     def get_transcribed_audio(self):
 
@@ -57,9 +67,10 @@ class GUI(tk.Frame):
             self.output_text.delete("1.0", tk.END)
             self.output_text.insert(tk.END, "\n".join(chords))
             self.output_text.config(state="disabled") # set state back to disabled
+            
+            
 
     def get_compared_spectrograms(self):
-
         # Prompt user to select two audio files
         file_path1 = filedialog.askopenfilename(filetypes=[("WAV files", "*.wav")])
         if file_path1:
@@ -79,27 +90,21 @@ class GUI(tk.Frame):
 
                 # Get compared spectrograms and display them
                 spectrogram = self.gui_interface.getComparedSpectrograms()
+
+                # Plot the spectrogram using Matplotlib
+                display.specshow(spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
+                self.ax.set(title='Compared Spectrograms')
+
+                # Draw the canvas
+                self.canvas.draw()
+                
+
+                # Update output text
                 self.output_text.config(state="normal") # set state to normal
                 self.output_text.delete("1.0", tk.END)
-                self.convert_to_image(spectrogram)
-                self.output_text.image_create(tk.END, image=self.image)
+                self.output_text.insert(tk.END, "Done")
                 self.output_text.config(state="disabled") # set state back to disabled
-        
-
-    def convert_to_image(self, spectrogram):
-
-        # Convert spectrogram to tkinter image
-        spectrogram *= 255
-        spectrogram = np.abs(255 - spectrogram)
-
-        # Convert the spectrogram to a PIL image
-        image = Image.fromarray(np.uint8(spectrogram)).convert("RGB")
-
-        # Convert the PIL image to a Tkinter image and return it
-        self.image = ImageTk.PhotoImage(image)
-
-
-
+                
 
 if __name__ == "__main__":
     

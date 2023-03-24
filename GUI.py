@@ -103,19 +103,21 @@ class GUI(tk.Frame):
 
                 # Get compared spectrograms and display them
                 spectrogram = self.gui_interface.getComparedSpectrograms()
-
+                score = str(self.gui_interface.getComparedScore())
+                print(score)
                 # Plot the spectrogram using Matplotlib
                 display.specshow(spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
                 self.ax.set(title='Compared Spectrograms')
 
+
                 # Draw the canvas
                 self.canvas.draw()
                 
-
+                
                 # Update output text
                 self.output_text.config(state="normal") # set state to normal
                 self.output_text.delete("1.0", tk.END)
-                self.output_text.insert(tk.END, self.gui_interface.getComparedScore())
+                self.output_text.insert(tk.END, score)
                 self.output_text.config(state="disabled") # set state back to disabled
 
     def playMusic(self):

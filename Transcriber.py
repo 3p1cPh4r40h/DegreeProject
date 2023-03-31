@@ -54,4 +54,4 @@ class Transcriber:
         label_set = ['Am', 'Bb', 'Bdim', 'C', 'Dm', 'Em', 'F', 'G']
         self.chords = [label_set[np.argmax(label)] for label in chords]
         
-        return self.chords
+        return self.chords, choppedAudio

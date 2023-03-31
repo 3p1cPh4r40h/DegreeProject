@@ -21,6 +21,11 @@ class GUI_Interface:
         self.ap = ap()
         self.ts = ts()
 
+        # Placeholder variables for segments of loaded librosa audio
+        # These are used for playback
+        self.audio_segments_1 = None
+        self.audio_segments_2 = None
+
 
 
     # Set and get functions
@@ -48,6 +53,16 @@ class GUI_Interface:
     # Get audio from GUI interface
         return self.audio2
 
+    def getAudioSegments1(self):
+        
+        # Get audio from GUI interface
+        return self.audio_segments_1
+    
+    def getAudioSegments2(self):
+
+        # Get audio from GUI interface
+        return self.audio_segments_2
+
     def remove_consecutive_duplicates(self, list):
 
         new_list = []
@@ -66,18 +81,22 @@ class GUI_Interface:
 
     # Transcribe the audio and return a list of chords
         self.ts.setAudio(self.audio1)
-        chords = self.ts.findChords()
+        chords, segments = self.ts.findChords()
+        self.audio_segments_1 = segments
         chords = self.remove_consecutive_duplicates(chords)
         return chords
 
-    def getComparedSpectrograms(self):
+    def getComparedSpectrogramsAndScore(self):
         
     # Create spectrogram of both audio files and compare them
         self.ap.setAudio(self.audio1)
         spectrogram1 = self.ap.melScaleSpec()
         self.ap.setAudio(self.audio2)
         spectrogram2 = self.ap.melScaleSpec()
-        
+
+        self.audio_segments_1 = ts.chop_audio(self.audio1)
+        self.audio_segments_2 = ts.chop_audio(self.audio2)
+
         # Determine the maximum length along the second axis
         max_length = max(spectrogram1.shape[1], spectrogram2.shape[1])
 
@@ -87,10 +106,25 @@ class GUI_Interface:
 
         # subtract spectrograms for comparison
         layeredSpectrogram = spectrogram1 - spectrogram2
+        '''
+        #normalize the spectrograms
+        normalized_spec1 = (spectrogram1 - np.mean(spectrogram1)) / np.std(spectrogram1)
+        normalized_spec2 = (spectrogram2 - np.mean(spectrogram2)) / np.std(spectrogram2)
+        
+        
+        print('before crosscor')
+        #get the cross correlation between them
+        crosscor = correlate2d(normalized_spec1, normalized_spec2, mode='same')
+        print('after crosscor')
+        '''
 
-        return layeredSpectrogram
+        #the similarity is equal to the maximum value of the cross correlation
+        similarity = "Placeholder until we speed up crosscor"
+        score = str(similarity)
 
+        return layeredSpectrogram, score
 
+'''
     #function to get the score of similarity between spectrograms todo: use more advanced comparison
     def getComparedScore(self):
 
@@ -106,14 +140,7 @@ class GUI_Interface:
         spec1 = np.pad(spec1, ((0, 0), (0, max_length - spec1.shape[1])), 'constant')
         spec2 = np.pad(spec2, ((0, 0), (0, max_length - spec2.shape[1])), 'constant')
 
-        #normalize the spectrograms
-        spec1 = (spec1 - np.mean(spec1)) / np.std(spec1)
-        spec2 = (spec2 - np.mean(spec2)) / np.std(spec2)
-
-        #get the cross correlation between them
-        crosscor = correlate2d(spec1, spec2, mode='same')
-
-        #the similarity is equal to the maximum value of the cross correlation
-        similarity = np.max(crosscor)
+        
         
         return similarity
+'''

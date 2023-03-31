@@ -111,11 +111,11 @@ class GUI(tk.Frame):
                 # Draw the canvas
                 self.canvas.draw()
                 
-
+                
                 # Update output text
                 self.output_text.config(state="normal") # set state to normal
                 self.output_text.delete("1.0", tk.END)
-                self.output_text.insert(tk.END, self.gui_interface.getComparedScore(self))
+                self.output_text.insert(tk.END, "Done")
                 self.output_text.config(state="disabled") # set state back to disabled
 
     def playMusic(self):

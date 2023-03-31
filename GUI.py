@@ -60,9 +60,13 @@ class GUI(tk.Frame):
         right_frame = tk.Frame(self.master)
         
         # Create radio buttons
-        transcribe_radio = tk.Radiobutton(right_frame, variable=self.active_radio_button, value='transcribe')
-        first_compare_radio = tk.Radiobutton(right_frame, variable=self.active_radio_button, value='firstCompare')
-        second_compare_radio = tk.Radiobutton(right_frame, variable=self.active_radio_button, value='secondCompare')
+        self.transcribe_radio = tk.Radiobutton(right_frame, variable=self.active_radio_button, value='transcribe', )
+        self.first_compare_radio = tk.Radiobutton(right_frame, variable=self.active_radio_button, value='firstCompare')
+        self.second_compare_radio = tk.Radiobutton(right_frame, variable=self.active_radio_button, value='secondCompare')
+
+        self.transcribe_radio.pack(side="left", pady=10, ipadx=5, padx=5)
+        self.first_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
+        self.second_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
 
         # Matplotlib canvas
         self.fig, self.ax = plt.subplots()
@@ -98,7 +102,6 @@ class GUI(tk.Frame):
 
             # Set audio1 in GUI_Interface
             self.gui_interface.setAudio1(self.file_path)
-            self.gui_interface.setAudio2(np.zeros_like(self.gui_interface.getAudio1))
 
             # Get transcribed chords and display them
             chords = self.gui_interface.getTranscribedAudio()
@@ -107,8 +110,10 @@ class GUI(tk.Frame):
             self.transcribe_output_text.insert(tk.END, " ".join(chords))
             self.transcribe_output_text.config(state="disabled") # set state back to disabled
 
-            # Get compared spectrograms, the score of similarity, and display them
-            spectrogram, _ = self.gui_interface.getComparedSpectrogramsAndScore()
+            # Get spectrograms and display 
+            print(self.gui_interface.getAudio1)
+            self.gui_interface.ap.setAudio(self.gui_interface.getAudio1)
+            spectrogram, _ = self.gui_interface.ap.melScaleSpec()
                 
             # Plot the spectrogram using Matplotlib
             display.specshow(spectrogram, ax=self.ax, x_axis='time', y_axis='linear')

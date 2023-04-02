@@ -91,11 +91,10 @@ class GUI_Interface:
     # Create spectrogram of both audio files and compare them
         self.ap.setAudio(self.audio1)
         spectrogram1 = self.ap.melScaleSpec()
+        self.audio_segments_1 = self.ts.chop_audio(self.ap.getAudio())
         self.ap.setAudio(self.audio2)
         spectrogram2 = self.ap.melScaleSpec()
-
-        self.audio_segments_1 = ts.chop_audio(self.audio1)
-        self.audio_segments_2 = ts.chop_audio(self.audio2)
+        self.audio_segments_2 = self.ts.chop_audio(self.ap.getAudio())
 
         # Determine the maximum length along the second axis
         max_length = max(spectrogram1.shape[1], spectrogram2.shape[1])

@@ -6,8 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 import numpy as np
-from IPython.display import Audio
-
+from sounddevice import play
 class GUI(tk.Frame):
 
     def __init__(self, master=None):
@@ -16,7 +15,7 @@ class GUI(tk.Frame):
         self.master = master
         self.master.title("Audio Processing GUI")
         self.gui_interface = GUI_Interface()
-        self.active_radio_button = ""
+        self.active_radio_button = tk.StringVar()
         self.mouse_event_connection = 0
         self.create_widgets()
         self.master.configure(background='light blue')
@@ -60,9 +59,9 @@ class GUI(tk.Frame):
         right_frame = tk.Frame(self.master)
         
         # Create radio buttons
-        self.transcribe_radio = tk.Radiobutton(right_frame, variable=self.active_radio_button, value='transcribe', )
-        self.first_compare_radio = tk.Radiobutton(right_frame, variable=self.active_radio_button, value='firstCompare')
-        self.second_compare_radio = tk.Radiobutton(right_frame, variable=self.active_radio_button, value='secondCompare')
+        self.transcribe_radio = tk.Radiobutton(right_frame, text='Transcribe Audio', variable=self.active_radio_button, value='transcribe', )
+        self.first_compare_radio = tk.Radiobutton(right_frame, text='Compare Audio 1', variable=self.active_radio_button, value='firstCompare')
+        self.second_compare_radio = tk.Radiobutton(right_frame, text='Compare Audio 2', variable=self.active_radio_button, value='secondCompare')
 
         self.transcribe_radio.pack(side="left", pady=10, ipadx=5, padx=5)
         self.first_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
@@ -111,9 +110,8 @@ class GUI(tk.Frame):
             self.transcribe_output_text.config(state="disabled") # set state back to disabled
 
             # Get spectrograms and display 
-            print(self.gui_interface.getAudio1)
-            self.gui_interface.ap.setAudio(self.gui_interface.getAudio1)
-            spectrogram, _ = self.gui_interface.ap.melScaleSpec()
+            self.gui_interface.ap.setAudio(self.gui_interface.getAudio1())
+            spectrogram = self.gui_interface.ap.melScaleSpec()
                 
             # Plot the spectrogram using Matplotlib
             display.specshow(spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
@@ -158,7 +156,6 @@ class GUI(tk.Frame):
                 self.output_text.config(state="disabled") # set state back to disabled
 
     def getAudioSegment(self, current_time, audio_segments):
-
         segment_length = len(audio_segments[0])
 
         # Calculate the index of the audio segment corresponding to the current time
@@ -176,22 +173,19 @@ class GUI(tk.Frame):
             # Calculate the current time based on the mouse position
             current_time = event.xdata
             if self.gui_interface.getAudioSegments1 != None:
-                try:
-                    if self.active_radio_button == "transcribe":
-                        # Get the audio segment of transcribed file corresponding to the current time
-                        audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments1)
-                    elif self.active_radio_button == "firstCompare":
-                        # Get the audio segment of first compared file corresponding to the current time
-                        audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments1)
-                    elif self.active_radio_button == "secondCompare":
-                        # Get the audio segment of second compared file corresponding to the current time
-                        audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments2)
-
-                    # Update the audio player to play the current audio segment
-                    Audio(data=audio_segment, rate=22050)
-
-                except:
-                    print('There was an error in audio playback')
+ 
+                if self.active_radio_button.get() == "transcribe":
+                    # Get the audio segment of transcribed file corresponding to the current time
+                    audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments1())
+                elif self.active_radio_button.get() == "firstCompare":
+                    # Get the audio segment of first compared file corresponding to the current time
+                    audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments1())
+                elif self.active_radio_button.get() == "secondCompare":
+                    # Get the audio segment of second compared file corresponding to the current time
+                    audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments2())
+                # Update the audio player to play the current audio segment
+                audio_segment = np.asarray(audio_segment)
+                play(audio_segment.T, 22050)
 
 if __name__ == "__main__":
     

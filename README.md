@@ -17,6 +17,5 @@ At the moment we have limited our training to guitar; however, adding in new ins
 
 # TODO and Questions
 - Colorbar for spectrograms
-- Set radio buttons to prevent confusing behaviour from compare 1 and transcribe radio buttons
 - Make buttons rounded
 - Consider better ways of displaying chords

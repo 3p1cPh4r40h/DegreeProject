@@ -131,6 +131,7 @@ class GUI(tk.Frame):
             self.transcribe_radio.config(state='normal')
             self.first_compare_radio.config(state="disabled")
             self.second_compare_radio.config(state="disabled")
+            self.transcribe_radio.select()
 
     def get_compared_spectrograms(self):
         # Prompt user to select two audio files
@@ -171,6 +172,7 @@ class GUI(tk.Frame):
                 self.transcribe_radio.config(state="disabled")
                 self.first_compare_radio.config(state='normal')
                 self.second_compare_radio.config(state='normal')
+                self.first_compare_radio.select()
 
     def getAudioSegment(self, current_time, audio_segments):
         # Current time is given in seconds (decimal value)

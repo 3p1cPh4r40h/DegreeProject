@@ -16,7 +16,7 @@ Our goal is to use fast fourier transforms to generate a spectrogram (an amplitu
 At the moment we have limited our training to guitar; however, adding in new instruments is more a question of data curation than processing. Depending on time alloted our group might record and label chords on piano and guitar to expand the dataset.
 
 # TODO and Questions
-- How do we want to display spectrograms?
-- Expand the functionality of how many chords we can label
-- Make things prettier, faster, and user friendly
-- Disable buttons while loading
+- Colorbar for spectrograms
+- Set radio buttons to prevent confusing behaviour from compare 1 and transcribe radio buttons
+- Make buttons rounded
+- Consider better ways of displaying chords

@@ -62,9 +62,9 @@ class GUI(tk.Frame):
         top_right_frame.pack(side='top', fill='x', padx=10, pady=5)
         # Create radio buttons
         self.audio_selection_label = tk.Label(top_right_frame, text="Choose Audio to Play:", bg="light blue")
-        self.transcribe_radio = tk.Radiobutton(top_right_frame, text='Transcribe Audio', variable=self.active_radio_button, value='transcribe')
-        self.first_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 1', variable=self.active_radio_button, value='firstCompare')
-        self.second_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 2', variable=self.active_radio_button, value='secondCompare')
+        self.transcribe_radio = tk.Radiobutton(top_right_frame, text='Transcribe Audio', variable=self.active_radio_button, value='transcribe', state="disabled")
+        self.first_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 1', variable=self.active_radio_button, value='firstCompare', state="disabled")
+        self.second_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 2', variable=self.active_radio_button, value='secondCompare', state="disabled")
         self.audio_selection_label.pack(side="top", pady=10, ipadx=5, padx=0)
         self.transcribe_radio.pack(side="left", pady=10, ipadx=5, padx=5)
         self.first_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
@@ -98,7 +98,7 @@ class GUI(tk.Frame):
         self.file_path = filedialog.askopenfilename(filetypes=[("WAV files", "*.wav")])
 
         if self.file_path:
-
+            
             # Display loading message
             self.transcribe_output_text.config(state="normal") # set state to normal
             self.transcribe_output_text.delete("1.0", tk.END)
@@ -119,13 +119,18 @@ class GUI(tk.Frame):
             # Get spectrograms and display 
             self.gui_interface.ap.setAudio(self.gui_interface.getAudio1())
             spectrogram = self.gui_interface.ap.melScaleSpec()
-                
+            
             # Plot the spectrogram using Matplotlib
             display.specshow(spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
             self.ax.set(title='Transcribed Audio')
-
+            
             # Draw the canvas object with the updated plot
             self.canvas.draw()
+
+            # Enable selection of transcribe radio button and disable other radio buttons
+            self.transcribe_radio.config(state='normal')
+            self.first_compare_radio.config(state="disabled")
+            self.second_compare_radio.config(state="disabled")
 
     def get_compared_spectrograms(self):
         # Prompt user to select two audio files
@@ -162,6 +167,11 @@ class GUI(tk.Frame):
                 self.output_text.insert(tk.END, "Done")
                 self.output_text.config(state="disabled") # set state back to disabled
 
+                # Enable selection of compare radio buttons and disable other radio button
+                self.transcribe_radio.config(state="disabled")
+                self.first_compare_radio.config(state='normal')
+                self.second_compare_radio.config(state='normal')
+
     def getAudioSegment(self, current_time, audio_segments):
         # Current time is given in seconds (decimal value)
         # Audio segments are 24775 samples long at a sample rate of 22050
@@ -183,7 +193,6 @@ class GUI(tk.Frame):
         if event.inaxes == self.ax:
             # Calculate the current time based on the mouse position
             current_time = event.xdata
-            print(current_time)
             if self.gui_interface.getAudioSegments1 != None and event.button == 1:
  
                 if self.active_radio_button.get() == "transcribe":
@@ -200,9 +209,7 @@ class GUI(tk.Frame):
                 
                 try:
                     audio_segment = np.asarray(audio_segment)
-                    print(audio_segment.shape)
                     audio_segment = audio_segment.T
-                    print(audio_segment.shape)
                     play(audio_segment, 22050)
                 except UnboundLocalError as e:
                     print(e)

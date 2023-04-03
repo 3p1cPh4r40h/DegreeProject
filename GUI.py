@@ -7,6 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 import numpy as np
 from sounddevice import play
+
 class GUI(tk.Frame):
 
     def __init__(self, master=None):
@@ -32,10 +33,9 @@ class GUI(tk.Frame):
         self.transcribe_label = tk.Label(left_frame, text="Transcribed Chords:", bg="light blue")
         self.transcribe_button = tk.Button(left_frame, text="Transcribe", command=self.get_transcribed_audio, fg="white", bg="blue")
 
+        # Pack the transcribe button
         self.transcribe_label.pack(side="top", pady=10, ipadx=5)
         self.transcribe_button.pack(side="top", pady=5, ipadx=5)
-
-        # Transcribe output text
         self.transcribe_output_text = tk.Text(left_frame, state="disabled")
         self.transcribe_output_text.pack(side='top', fill='y', expand=True, pady=20)
 
@@ -46,7 +46,6 @@ class GUI(tk.Frame):
         # Compare label and button
         self.compare_label = tk.Label(center_frame, text="Layered Spectrogram:", bg="light blue")
         self.compare_button = tk.Button(center_frame, text="Compare", command=self.get_compared_spectrograms, fg="white", bg="blue")
-
         self.compare_label.pack(side="top", pady=10, ipadx=5, padx=0)
         self.compare_button.pack(side="top", pady=5, ipadx=5, padx=0)
 
@@ -58,27 +57,35 @@ class GUI(tk.Frame):
         # Create right frame
         right_frame = tk.Frame(self.master)
         
+        # Create top of the right frame to hold the radio buttons
+        top_right_frame = tk.Frame(right_frame)
+        top_right_frame.pack(side='top', fill='x', padx=10, pady=5)
         # Create radio buttons
-        self.transcribe_radio = tk.Radiobutton(right_frame, text='Transcribe Audio', variable=self.active_radio_button, value='transcribe', )
-        self.first_compare_radio = tk.Radiobutton(right_frame, text='Compare Audio 1', variable=self.active_radio_button, value='firstCompare')
-        self.second_compare_radio = tk.Radiobutton(right_frame, text='Compare Audio 2', variable=self.active_radio_button, value='secondCompare')
-
+        self.audio_selection_label = tk.Label(top_right_frame, text="Choose Audio to Play:", bg="light blue")
+        self.transcribe_radio = tk.Radiobutton(top_right_frame, text='Transcribe Audio', variable=self.active_radio_button, value='transcribe')
+        self.first_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 1', variable=self.active_radio_button, value='firstCompare')
+        self.second_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 2', variable=self.active_radio_button, value='secondCompare')
+        self.audio_selection_label.pack(side="top", pady=10, ipadx=5, padx=0)
         self.transcribe_radio.pack(side="left", pady=10, ipadx=5, padx=5)
         self.first_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
         self.second_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
+        
+
+        # Create bottom of right frame to hold canvas and toolbar
+        bottom_right_frame = tk.Frame(right_frame)
+        bottom_right_frame.pack(side='top', fill='both', expand=True, padx=10, pady=5)
 
         # Matplotlib canvas
         self.fig, self.ax = plt.subplots()
-        self.canvas = FigureCanvasTkAgg(self.fig, master=right_frame)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=bottom_right_frame)
         self.canvas.get_tk_widget().pack(side='bottom', fill='both', expand=True)
 
         # Link mouse event to canvas for scrubbing
-        self.mouse_event_connection = self.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)
+        self.mouse_event_connection = self.canvas.mpl_connect('button_press_event', self.on_mouse_click)
 
         # Navigation toolbar for canvas
-        self.toolbar = NavigationToolbar2Tk(self.canvas, right_frame)
+        self.toolbar = NavigationToolbar2Tk(self.canvas, bottom_right_frame)
         self.toolbar.update()
-
 
         # Add left, center and right frames to master frame
         left_frame.pack(side='left', fill="both", expand=True, padx=10, pady=5)
@@ -115,7 +122,7 @@ class GUI(tk.Frame):
                 
             # Plot the spectrogram using Matplotlib
             display.specshow(spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
-            self.ax.set(title='Compared Spectrograms')
+            self.ax.set(title='Transcribed Audio')
 
             # Draw the canvas object with the updated plot
             self.canvas.draw()
@@ -156,23 +163,28 @@ class GUI(tk.Frame):
                 self.output_text.config(state="disabled") # set state back to disabled
 
     def getAudioSegment(self, current_time, audio_segments):
-        segment_length = len(audio_segments[0])
-
+        # Current time is given in seconds (decimal value)
+        # Audio segments are 24775 samples long at a sample rate of 22050
+        
+        # Convert current_time to an integer
+        current_time = round(current_time)
+        # Number of samples to get to the clicked time
+        number_of_samples = current_time * 22050
         # Calculate the index of the audio segment corresponding to the current time
-        segment_index = int(current_time / segment_length)
+        segment_index = round(number_of_samples / 24775)
 
         # Get the audio segment corresponding to the index
-        audio_segment = audio_segments[segment_index * segment_length:
-                                (segment_index + 1) * segment_length]
+        audio_segment = audio_segments[segment_index]
 
         return audio_segment
 
-    def on_mouse_move(self, event):
+    def on_mouse_click(self, event):
         # Check if the mouse is over the spectrogram
         if event.inaxes == self.ax:
             # Calculate the current time based on the mouse position
             current_time = event.xdata
-            if self.gui_interface.getAudioSegments1 != None:
+            print(current_time)
+            if self.gui_interface.getAudioSegments1 != None and event.button == 1:
  
                 if self.active_radio_button.get() == "transcribe":
                     # Get the audio segment of transcribed file corresponding to the current time
@@ -184,8 +196,17 @@ class GUI(tk.Frame):
                     # Get the audio segment of second compared file corresponding to the current time
                     audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments2())
                 # Update the audio player to play the current audio segment
-                audio_segment = np.asarray(audio_segment)
-                play(audio_segment.T, 22050)
+
+                
+                try:
+                    audio_segment = np.asarray(audio_segment)
+                    print(audio_segment.shape)
+                    audio_segment = audio_segment.T
+                    print(audio_segment.shape)
+                    play(audio_segment, 22050)
+                except UnboundLocalError as e:
+                    print(e)
+                    print('Please wait for audio to process before trying to play an audio file.')
 
 if __name__ == "__main__":
     

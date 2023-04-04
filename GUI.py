@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter.ttk import *
 from tkinter import filedialog
 from GUI_Interface import GUI_Interface
 from librosa import display
@@ -7,6 +8,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.backends.backend_tkagg import NavigationToolbar2Tk
 import numpy as np
 from sounddevice import play
+import winsound
 
 class GUI(tk.Frame):
 
@@ -20,6 +22,9 @@ class GUI(tk.Frame):
         self.mouse_event_connection = 0
         self.create_widgets()
         self.master.configure(background='light blue')
+        self.file_path = ""
+        self.file_path2 = ""
+        self.file_path1 = ""
         
         
 
@@ -27,7 +32,11 @@ class GUI(tk.Frame):
     def create_widgets(self):
 
         # Create left frame
-        left_frame = tk.Frame(self.master)
+        left_frame = tk.Frame(self.master,bg='light blue')
+        s = Style()
+        s.configure('left_frame', background='light blue')
+        left_frame.master.configure(background='light blue')
+        
 
         # Transcribe label and button
         self.transcribe_label = tk.Label(left_frame, text="Transcribed Chords:", bg="light blue")
@@ -36,22 +45,22 @@ class GUI(tk.Frame):
         # Pack the transcribe button
         self.transcribe_label.pack(side="top", pady=10, ipadx=5)
         self.transcribe_button.pack(side="top", pady=5, ipadx=5)
-        self.transcribe_output_text = tk.Text(left_frame, state="disabled")
-        self.transcribe_output_text.pack(side='top', fill='y', expand=True, pady=20)
+        self.transcribe_output_text = tk.Text(left_frame, height=10,state="disabled")
+        self.transcribe_output_text.pack(side='top', expand=False, pady=30)
 
+        # Compare label and button
+        self.compare_label = tk.Label(left_frame, text="Layered Spectrogram:", bg="light blue")
+        self.compare_button = tk.Button(left_frame, text="Compare", command=self.get_compared_spectrograms, fg="white", bg="blue")
+        self.compare_label.pack(side="top", pady=10, ipadx=5, padx=10)
+        self.compare_button.pack(side="top", pady=5, ipadx=5, padx=10)
+
+        # Comparison output text
+        self.output_text = tk.Text(left_frame,  height=5,state="disabled")
+        self.output_text.pack(side='top', expand=False, pady=20)
 
         # Create center frame
         center_frame = tk.Frame(self.master)
 
-        # Compare label and button
-        self.compare_label = tk.Label(center_frame, text="Layered Spectrogram:", bg="light blue")
-        self.compare_button = tk.Button(center_frame, text="Compare", command=self.get_compared_spectrograms, fg="white", bg="blue")
-        self.compare_label.pack(side="top", pady=10, ipadx=5, padx=0)
-        self.compare_button.pack(side="top", pady=5, ipadx=5, padx=0)
-
-        # Comparison output text
-        self.output_text = tk.Text(center_frame, state="disabled")
-        self.output_text.pack(side='top', fill='y', expand=True, pady=20)
 
 
         # Create right frame
@@ -61,6 +70,9 @@ class GUI(tk.Frame):
         top_right_frame = tk.Frame(right_frame)
         top_right_frame.pack(side='top', fill='x', padx=10, pady=5)
         # Create radio buttons
+        self.play_button = tk.Button(top_right_frame, text="Play Song", command=self.playMusic,fg="white",bg = "lime green")
+
+
         self.audio_selection_label = tk.Label(top_right_frame, text="Choose Audio to Play:", bg="light blue")
         self.transcribe_radio = tk.Radiobutton(top_right_frame, text='Transcribe Audio', variable=self.active_radio_button, value='transcribe', state="disabled")
         self.first_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 1', variable=self.active_radio_button, value='firstCompare', state="disabled")
@@ -70,7 +82,7 @@ class GUI(tk.Frame):
         self.first_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
         self.second_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
         
-
+        self.play_button.pack(side="top", pady=5,ipadx=5)
         # Create bottom of right frame to hold canvas and toolbar
         bottom_right_frame = tk.Frame(right_frame)
         bottom_right_frame.pack(side='top', fill='both', expand=True, padx=10, pady=5)
@@ -129,8 +141,8 @@ class GUI(tk.Frame):
 
             # Enable selection of transcribe radio button and disable other radio buttons
             self.transcribe_radio.config(state='normal')
-            self.first_compare_radio.config(state="disabled")
-            self.second_compare_radio.config(state="disabled")
+           # self.first_compare_radio.config(state="disabled")
+           # self.second_compare_radio.config(state="disabled")
             self.transcribe_radio.select()
 
     def get_compared_spectrograms(self):
@@ -169,7 +181,7 @@ class GUI(tk.Frame):
                 self.output_text.config(state="disabled") # set state back to disabled
 
                 # Enable selection of compare radio buttons and disable other radio button
-                self.transcribe_radio.config(state="disabled")
+               # self.transcribe_radio.config(state="disabled")
                 self.first_compare_radio.config(state='normal')
                 self.second_compare_radio.config(state='normal')
                 self.first_compare_radio.select()
@@ -216,6 +228,19 @@ class GUI(tk.Frame):
                 except UnboundLocalError as e:
                     print(e)
                     print('Please wait for audio to process before trying to play an audio file.')
+    def playMusic(self):
+        # check if the user has entered in some music
+                if self.active_radio_button.get() == "transcribe":
+                    # Get the audio segment of transcribed file corresponding to the current time
+                            if self.file_path:
+                                winsound.PlaySound(self.file_path, winsound.SND_FILENAME) 
+                elif self.active_radio_button.get() == "firstCompare":
+                    # Get the audio segment of first compared file corresponding to the current time
+                            if self.file_path1:
+                                winsound.PlaySound(self.file_path1, winsound.SND_FILENAME) 
+                elif self.active_radio_button.get() == "secondCompare":
+                            if self.file_path2:
+                                winsound.PlaySound(self.file_path2, winsound.SND_FILENAME) 
 
 if __name__ == "__main__":
     

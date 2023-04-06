@@ -6,6 +6,7 @@ import librosa
 import numpy as np
 from scipy.spatial.distance import cdist
 
+
 class GUI_Interface:
 
     def __init__(self, audio1=None, audio2=None):

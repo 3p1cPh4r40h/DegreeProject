@@ -169,13 +169,8 @@ class GUI(tk.Frame):
                 # Clear the canvas
                 plt.cla()
 
-                # Get compared spectrograms, the score of similarity, and display them
+                # Get compared spectrograms and and display them
                 spectrogram, score = self.gui_interface.getComparedSpectrogramsAndScore()
-                
-                # Get compared spectrograms and display them
-                spectrogram = self.gui_interface.getComparedSpectrograms()
-                score = str(self.gui_interface.getComparedScore())
-                print(score)
 
                 # Plot the spectrogram using Matplotlib
                 display.specshow(spectrogram, ax=self.ax, x_axis='time', y_axis='linear')

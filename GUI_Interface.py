@@ -62,7 +62,7 @@ class GUI_Interface:
         # Get audio from GUI interface
         return self.audio_segments_2
 
-    def remove_consecutive_duplicates(self, list):
+    def _remove_consecutive_duplicates(self, list):
 
         new_list = []
         for i, item in enumerate(list):
@@ -82,7 +82,7 @@ class GUI_Interface:
         self.ts.setAudio(self.audio1)
         chords, segments = self.ts.findChords()
         self.audio_segments_1 = segments
-        chords = self.remove_consecutive_duplicates(chords)
+        chords = self._remove_consecutive_duplicates(chords)
         return chords
 
     def getComparedSpectrogramsAndScore(self):

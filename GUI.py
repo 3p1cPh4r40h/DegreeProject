@@ -68,16 +68,16 @@ class GUI(tk.Frame):
         right_frame = tk.Frame(self.master,bg = 'light blue')
         
         # Create top of the right frame to hold the radio buttons
-        top_right_frame = tk.Frame(right_frame)
+        top_right_frame = tk.Frame(right_frame, bg = 'light blue')
         top_right_frame.pack(side='top', fill='x', padx=10, pady=5)
         # Create radio buttons
-        self.play_button = tk.Button(top_right_frame, text="Play Song From Start", command=self.playMusic,fg="white",bg = "lime green")
+        self.play_button = tk.Button(top_right_frame, text="Play Song From Start", command=self.play_music,fg="white",bg = "lime green")
 
 
-        self.audio_selection_label = tk.Label(top_right_frame, text="Choose Audio to Play:", font = ('Times',15))
-        self.transcribe_radio = tk.Radiobutton(top_right_frame, text='Transcribe Audio', command=self.on_select_radiobutton, variable=self.active_radio_button, value='transcribe', state="disabled")
-        self.first_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 1', command=self.on_select_radiobutton, variable=self.active_radio_button, value='firstCompare', state="disabled")
-        self.second_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 2', command=self.on_select_radiobutton, variable=self.active_radio_button, value='secondCompare', state="disabled")
+        self.audio_selection_label = tk.Label(top_right_frame, text="Choose Audio to Play:", font = ('Times',15), bg = 'light blue')
+        self.transcribe_radio = tk.Radiobutton(top_right_frame, text='Transcribe Audio', command=self.on_select_radiobutton, variable=self.active_radio_button, value='transcribe', state="disabled", bg = 'light blue')
+        self.first_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 1', command=self.on_select_radiobutton, variable=self.active_radio_button, value='firstCompare', state="disabled", bg = 'light blue')
+        self.second_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 2', command=self.on_select_radiobutton, variable=self.active_radio_button, value='secondCompare', state="disabled", bg = 'light blue')
         self.audio_selection_label.pack(side="top", pady=10, ipadx=5, padx=0)
         self.transcribe_radio.pack(side="left", pady=10, ipadx=5, padx=5)
         self.first_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
@@ -194,7 +194,7 @@ class GUI(tk.Frame):
                 self.second_compare_radio.config(state='normal')
                 self.first_compare_radio.select()
 
-    def getAudioSegment(self, current_time, audio_segments):
+    def get_audio_segment(self, current_time, audio_segments):
         # Current time is given in seconds (decimal value)
         # Audio segments are 24775 samples long at a sample rate of 22050
         
@@ -219,13 +219,13 @@ class GUI(tk.Frame):
  
                 if self.active_radio_button.get() == "transcribe":
                     # Get the audio segment of transcribed file corresponding to the current time
-                    audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments1())
+                    audio_segment = self.get_audio_segment(current_time, self.gui_interface.getAudioSegments1())
                 elif self.active_radio_button.get() == "firstCompare":
                     # Get the audio segment of first compared file corresponding to the current time
-                    audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments1())
+                    audio_segment = self.get_audio_segment(current_time, self.gui_interface.getAudioSegments1())
                 elif self.active_radio_button.get() == "secondCompare":
                     # Get the audio segment of second compared file corresponding to the current time
-                    audio_segment = self.getAudioSegment(current_time, self.gui_interface.getAudioSegments2())
+                    audio_segment = self.get_audio_segment(current_time, self.gui_interface.getAudioSegments2())
                 # Update the audio player to play the current audio segment
 
                 
@@ -273,7 +273,7 @@ class GUI(tk.Frame):
             # Draw the canvas object with the updated plot
             self.canvas.draw()
     
-    def playMusic(self):
+    def play_music(self):
         # check if the user has entered in some music
         if self.active_radio_button.get() == "transcribe":
             # Get the audio segment of transcribed file corresponding to the current time

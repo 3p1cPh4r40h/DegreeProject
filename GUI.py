@@ -25,7 +25,8 @@ class GUI(tk.Frame):
         self.file_path = ""
         self.file_path2 = ""
         self.file_path1 = ""
-        
+        self.transcribe_spectrogram = None
+        self.compare_spectroram = None
         
 
 
@@ -74,9 +75,9 @@ class GUI(tk.Frame):
 
 
         self.audio_selection_label = tk.Label(top_right_frame, text="Choose Audio to Play:", bg="light blue")
-        self.transcribe_radio = tk.Radiobutton(top_right_frame, text='Transcribe Audio', variable=self.active_radio_button, value='transcribe', state="disabled")
-        self.first_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 1', variable=self.active_radio_button, value='firstCompare', state="disabled")
-        self.second_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 2', variable=self.active_radio_button, value='secondCompare', state="disabled")
+        self.transcribe_radio = tk.Radiobutton(top_right_frame, text='Transcribe Audio', command=self.on_select_radiobutton, variable=self.active_radio_button, value='transcribe', state="disabled")
+        self.first_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 1', command=self.on_select_radiobutton, variable=self.active_radio_button, value='firstCompare', state="disabled")
+        self.second_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 2', command=self.on_select_radiobutton, variable=self.active_radio_button, value='secondCompare', state="disabled")
         self.audio_selection_label.pack(side="top", pady=10, ipadx=5, padx=0)
         self.transcribe_radio.pack(side="left", pady=10, ipadx=5, padx=5)
         self.first_compare_radio.pack(side="left", pady=10, ipadx=5, padx=5)
@@ -133,10 +134,10 @@ class GUI(tk.Frame):
 
             # Get spectrograms and display 
             self.gui_interface.ap.setAudio(self.gui_interface.getAudio1())
-            spectrogram = self.gui_interface.ap.melScaleSpec()
-            
+            self.transcribe_spectrogram = self.gui_interface.ap.melScaleSpec()
+
             # Plot the spectrogram using Matplotlib
-            display.specshow(spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
+            display.specshow(self.transcribe_spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
             self.ax.set(title='Transcribed Audio')
             
             # Draw the canvas object with the updated plot
@@ -170,15 +171,14 @@ class GUI(tk.Frame):
                 plt.cla()
 
                 # Get compared spectrograms and and display them
-                spectrogram, score = self.gui_interface.getComparedSpectrogramsAndScore()
+                self.compare_spectrogram, score = self.gui_interface.getComparedSpectrogramsAndScore()
 
                 # Plot the spectrogram using Matplotlib
-                display.specshow(spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
+                display.specshow(self.compare_spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
                 self.ax.set(title='Compared Spectrograms')
 
 
                 # Draw the canvas object with the updated plot
-
                 self.canvas.draw()
                 
                 
@@ -189,7 +189,7 @@ class GUI(tk.Frame):
                 self.output_text.config(state="disabled") # set state back to disabled
 
                 # Enable selection of compare radio buttons and disable other radio button
-               # self.transcribe_radio.config(state="disabled")
+                # self.transcribe_radio.config(state="disabled")
                 self.first_compare_radio.config(state='normal')
                 self.second_compare_radio.config(state='normal')
                 self.first_compare_radio.select()
@@ -237,19 +237,55 @@ class GUI(tk.Frame):
                     print(e)
                     print('Please wait for audio to process before trying to play an audio file.')
     
+    def on_select_radiobutton(self):
+        if self.active_radio_button.get() == "transcribe":
+            # Clear the canvas
+            plt.cla()
+
+            # Plot the spectrogram using Matplotlib
+            display.specshow(self.transcribe_spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
+            self.ax.set(title='Transcribed Audio')
+            
+            # Draw the canvas object with the updated plot
+            self.canvas.draw()
+
+        elif self.active_radio_button.get() == "firstCompare":
+            # Clear the canvas
+            plt.cla()
+
+            # Plot the spectrogram using Matplotlib
+            display.specshow(self.compare_spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
+            self.ax.set(title='Compared Spectrograms')
+
+
+            # Draw the canvas object with the updated plot
+            self.canvas.draw()
+
+        elif self.active_radio_button.get() == "secondCompare":
+            # Clear the canvas
+            plt.cla()
+
+            # Plot the spectrogram using Matplotlib
+            display.specshow(self.compare_spectrogram, ax=self.ax, x_axis='time', y_axis='linear')
+            self.ax.set(title='Compared Spectrograms')
+
+
+            # Draw the canvas object with the updated plot
+            self.canvas.draw()
+    
     def playMusic(self):
         # check if the user has entered in some music
-                if self.active_radio_button.get() == "transcribe":
-                    # Get the audio segment of transcribed file corresponding to the current time
-                            if self.file_path:
-                                winsound.PlaySound(self.file_path, winsound.SND_FILENAME) 
-                elif self.active_radio_button.get() == "firstCompare":
-                    # Get the audio segment of first compared file corresponding to the current time
-                            if self.file_path1:
-                                winsound.PlaySound(self.file_path1, winsound.SND_FILENAME) 
-                elif self.active_radio_button.get() == "secondCompare":
-                            if self.file_path2:
-                                winsound.PlaySound(self.file_path2, winsound.SND_FILENAME) 
+        if self.active_radio_button.get() == "transcribe":
+            # Get the audio segment of transcribed file corresponding to the current time
+            if self.file_path:
+                winsound.PlaySound(self.file_path, winsound.SND_FILENAME) 
+            elif self.active_radio_button.get() == "firstCompare":
+                # Get the audio segment of first compared file corresponding to the current time
+                if self.file_path1:
+                    winsound.PlaySound(self.file_path1, winsound.SND_FILENAME) 
+            elif self.active_radio_button.get() == "secondCompare":
+                if self.file_path2:
+                    winsound.PlaySound(self.file_path2, winsound.SND_FILENAME) 
 
 if __name__ == "__main__":
     

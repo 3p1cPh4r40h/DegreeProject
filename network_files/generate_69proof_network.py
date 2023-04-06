@@ -47,7 +47,7 @@ plt.title('Model accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Validation'], loc='upper left')
-plt.savefig('model_results/accuracy_plotxproof.png')
+plt.savefig('model_results/accuracy_plot69proof.png')
 plt.show()
 
 # Plot the training and validation loss over the training epochs
@@ -57,7 +57,7 @@ plt.title('Model loss')
 plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Validation'], loc='upper left')
-plt.savefig('model_results/loss_plotxproof.png')
+plt.savefig('model_results/loss_plot69proof.png')
 plt.show()
 
 

@@ -118,15 +118,14 @@ class GUI_Interface:
 
         return layeredSpectrogram, score
 
-'''
+
     #function to get the score of similarity between spectrograms todo: use more advanced comparison
     def getComparedScore(self):
-
         self.ap.setAudio(self.audio1)
         spec1 = self.ap.melScaleSpec()
         self.ap.setAudio(self.audio2)
         spec2 = self.ap.melScaleSpec()
-        
+
         # Determine the maximum length along the second axis
         max_length = max(spec1.shape[1], spec2.shape[1])
 
@@ -134,7 +133,16 @@ class GUI_Interface:
         spec1 = np.pad(spec1, ((0, 0), (0, max_length - spec1.shape[1])), 'constant')
         spec2 = np.pad(spec2, ((0, 0), (0, max_length - spec2.shape[1])), 'constant')
 
-        
-        
+        # Normalize the spectrograms
+        spec1 = (spec1 - np.mean(spec1)) / np.std(spec1)
+        spec2 = (spec2 - np.mean(spec2)) / np.std(spec2)
+
+        # Get the Euclidean distance between the spectrograms
+        distance = cdist(spec1.T, spec2.T, 'euclidean')
+
+        # The similarity is equal to the negative sum of the distances
+        similarity = -np.sum(distance)
+
         return similarity
-'''
+
+

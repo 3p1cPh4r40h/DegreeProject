@@ -128,6 +128,9 @@ class GUI(tk.Frame):
             self.transcribe_output_text.insert(tk.END, " ".join(chords))
             self.transcribe_output_text.config(state="disabled") # set state back to disabled
 
+            # Clear the canvas
+            plt.cla()
+
             # Get spectrograms and display 
             self.gui_interface.ap.setAudio(self.gui_interface.getAudio1())
             spectrogram = self.gui_interface.ap.melScaleSpec()
@@ -163,6 +166,9 @@ class GUI(tk.Frame):
                 self.gui_interface.setAudio1(self.file_path1)
                 self.gui_interface.setAudio2(self.file_path2)
 
+                # Clear the canvas
+                plt.cla()
+
                 # Get compared spectrograms, the score of similarity, and display them
                 spectrogram, score = self.gui_interface.getComparedSpectrogramsAndScore()
                 
@@ -177,7 +183,7 @@ class GUI(tk.Frame):
                 # Update output text
                 self.output_text.config(state="normal") # set state to normal
                 self.output_text.delete("1.0", tk.END)
-                self.output_text.insert(tk.END, "Done")
+                self.output_text.insert(tk.END, score)
                 self.output_text.config(state="disabled") # set state back to disabled
 
                 # Enable selection of compare radio buttons and disable other radio button
@@ -228,6 +234,7 @@ class GUI(tk.Frame):
                 except UnboundLocalError as e:
                     print(e)
                     print('Please wait for audio to process before trying to play an audio file.')
+    
     def playMusic(self):
         # check if the user has entered in some music
                 if self.active_radio_button.get() == "transcribe":

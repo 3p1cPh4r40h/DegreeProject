@@ -4,8 +4,7 @@ from AudioProcessor import AudioProcessor as ap
 from Transcriber import Transcriber as ts
 import librosa 
 import numpy as np
-from scipy.signal import correlate2d
-
+from scipy.spatial.distance import cdist
 
 class GUI_Interface:
 
@@ -105,20 +104,16 @@ class GUI_Interface:
 
         # subtract spectrograms for comparison
         layeredSpectrogram = spectrogram1 - spectrogram2
-        '''
-        #normalize the spectrograms
+
         normalized_spec1 = (spectrogram1 - np.mean(spectrogram1)) / np.std(spectrogram1)
         normalized_spec2 = (spectrogram2 - np.mean(spectrogram2)) / np.std(spectrogram2)
         
-        
-        print('before crosscor')
-        #get the cross correlation between them
-        crosscor = correlate2d(normalized_spec1, normalized_spec2, mode='same')
-        print('after crosscor')
-        '''
+        # Get the Euclidean distance between the spectrograms
+        distance = cdist(normalized_spec1.T, normalized_spec2.T, 'euclidean')
 
-        #the similarity is equal to the maximum value of the cross correlation
-        similarity = "Placeholder until we speed up crosscor"
+        # The similarity is equal to the negative sum of the distances
+        similarity = -np.sum(distance)
+
         score = str(similarity)
 
         return layeredSpectrogram, score

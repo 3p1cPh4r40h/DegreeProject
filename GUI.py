@@ -279,13 +279,13 @@ class GUI(tk.Frame):
             # Get the audio segment of transcribed file corresponding to the current time
             if self.file_path:
                 winsound.PlaySound(self.file_path, winsound.SND_FILENAME) 
-            elif self.active_radio_button.get() == "firstCompare":
+        elif self.active_radio_button.get() == "firstCompare":
                 # Get the audio segment of first compared file corresponding to the current time
-                if self.file_path1:
-                    winsound.PlaySound(self.file_path1, winsound.SND_FILENAME) 
-            elif self.active_radio_button.get() == "secondCompare":
-                if self.file_path2:
-                    winsound.PlaySound(self.file_path2, winsound.SND_FILENAME) 
+            if self.file_path1:
+                winsound.PlaySound(self.file_path1, winsound.SND_FILENAME) 
+        elif self.active_radio_button.get() == "secondCompare":
+            if self.file_path2:
+                winsound.PlaySound(self.file_path2, winsound.SND_FILENAME) 
 
 if __name__ == "__main__":
     

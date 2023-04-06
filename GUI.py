@@ -40,7 +40,7 @@ class GUI(tk.Frame):
         
 
         # Transcribe label and button
-        self.transcribe_label = tk.Label(left_frame, text="Transcribed Chords:", bg="light blue")
+        self.transcribe_label = tk.Label(left_frame, text="Transcribed Chords:", bg="light blue",font = ('Times',15))
         self.transcribe_button = tk.Button(left_frame, text="Transcribe", command=self.get_transcribed_audio, fg="white", bg="blue")
 
         # Pack the transcribe button
@@ -50,7 +50,7 @@ class GUI(tk.Frame):
         self.transcribe_output_text.pack(side='top', expand=False, pady=30)
 
         # Compare label and button
-        self.compare_label = tk.Label(left_frame, text="Layered Spectrogram:", bg="light blue")
+        self.compare_label = tk.Label(left_frame, text="Layered Spectrogram:", bg="light blue",font = ('Times',15))
         self.compare_button = tk.Button(left_frame, text="Compare", command=self.get_compared_spectrograms, fg="white", bg="blue")
         self.compare_label.pack(side="top", pady=10, ipadx=5, padx=10)
         self.compare_button.pack(side="top", pady=5, ipadx=5, padx=10)
@@ -74,7 +74,7 @@ class GUI(tk.Frame):
         self.play_button = tk.Button(top_right_frame, text="Play Song", command=self.playMusic,fg="white",bg = "lime green")
 
 
-        self.audio_selection_label = tk.Label(top_right_frame, text="Choose Audio to Play:", bg="light blue")
+        self.audio_selection_label = tk.Label(top_right_frame, text="Choose Audio to Play:", font = ('Times',15))
         self.transcribe_radio = tk.Radiobutton(top_right_frame, text='Transcribe Audio', command=self.on_select_radiobutton, variable=self.active_radio_button, value='transcribe', state="disabled")
         self.first_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 1', command=self.on_select_radiobutton, variable=self.active_radio_button, value='firstCompare', state="disabled")
         self.second_compare_radio = tk.Radiobutton(top_right_frame, text='Compare Audio 2', command=self.on_select_radiobutton, variable=self.active_radio_button, value='secondCompare', state="disabled")

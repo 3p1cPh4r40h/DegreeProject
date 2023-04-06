@@ -114,7 +114,7 @@ class GUI_Interface:
 
         # Compute the cosine similarity between the spectral contrast matrices
         similarity = cosine_similarity(contrast1.T, contrast2.T)
-        similarity = round(similarity)
-        score = str(100*similarity[0][0]) + "%"
+        
+        score = str(100*round(similarity[0][0])) + "%"
 
         return layeredSpectrogram, score

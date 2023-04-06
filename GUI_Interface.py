@@ -5,7 +5,6 @@ from Transcriber import Transcriber as ts
 import librosa 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from fastdtw import fastdtw
 
 class GUI_Interface:
 

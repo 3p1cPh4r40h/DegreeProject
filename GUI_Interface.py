@@ -4,8 +4,8 @@ from AudioProcessor import AudioProcessor as ap
 from Transcriber import Transcriber as ts
 import librosa 
 import numpy as np
-from scipy.spatial.distance import cdist
-
+from sklearn.metrics.pairwise import cosine_similarity
+from fastdtw import fastdtw
 
 class GUI_Interface:
 
@@ -109,41 +109,13 @@ class GUI_Interface:
         normalized_spec1 = (spectrogram1 - np.mean(spectrogram1)) / np.std(spectrogram1)
         normalized_spec2 = (spectrogram2 - np.mean(spectrogram2)) / np.std(spectrogram2)
         
-        # Get the Euclidean distance between the spectrograms
-        distance = cdist(normalized_spec1.T, normalized_spec2.T, 'euclidean')
+        # Compute the spectral contrast matrices for the two audio files
+        contrast1 = librosa.feature.spectral_contrast(S=normalized_spec1)
+        contrast2 = librosa.feature.spectral_contrast(S=normalized_spec2)
 
-        # The similarity is equal to the negative sum of the distances
-        similarity = -np.sum(distance)
+        # Compute the cosine similarity between the spectral contrast matrices
+        similarity = cosine_similarity(contrast1.T, contrast2.T)
 
-        score = str(similarity)
+        score = str(100*similarity[0][0]) + "%"
 
         return layeredSpectrogram, score
-
-
-    #function to get the score of similarity between spectrograms todo: use more advanced comparison
-    def getComparedScore(self):
-        self.ap.setAudio(self.audio1)
-        spec1 = self.ap.melScaleSpec()
-        self.ap.setAudio(self.audio2)
-        spec2 = self.ap.melScaleSpec()
-
-        # Determine the maximum length along the second axis
-        max_length = max(spec1.shape[1], spec2.shape[1])
-
-        # Pad arrays to maximum length along second axis
-        spec1 = np.pad(spec1, ((0, 0), (0, max_length - spec1.shape[1])), 'constant')
-        spec2 = np.pad(spec2, ((0, 0), (0, max_length - spec2.shape[1])), 'constant')
-
-        # Normalize the spectrograms
-        spec1 = (spec1 - np.mean(spec1)) / np.std(spec1)
-        spec2 = (spec2 - np.mean(spec2)) / np.std(spec2)
-
-        # Get the Euclidean distance between the spectrograms
-        distance = cdist(spec1.T, spec2.T, 'euclidean')
-
-        # The similarity is equal to the negative sum of the distances
-        similarity = -np.sum(distance)
-
-        return similarity
-
-

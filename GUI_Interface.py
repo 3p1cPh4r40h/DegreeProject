@@ -4,7 +4,6 @@ from AudioProcessor import AudioProcessor as ap
 from Transcriber import Transcriber as ts
 import librosa 
 import numpy as np
-from scipy.signal import correlate2d
 from scipy.spatial.distance import cdist
 
 
@@ -21,6 +20,11 @@ class GUI_Interface:
             self.audio2 = a2
         self.ap = ap()
         self.ts = ts()
+
+        # Placeholder variables for segments of loaded librosa audio
+        # These are used for playback
+        self.audio_segments_1 = None
+        self.audio_segments_2 = None
 
 
 
@@ -49,6 +53,16 @@ class GUI_Interface:
     # Get audio from GUI interface
         return self.audio2
 
+    def getAudioSegments1(self):
+        
+        # Get audio from GUI interface
+        return self.audio_segments_1
+    
+    def getAudioSegments2(self):
+
+        # Get audio from GUI interface
+        return self.audio_segments_2
+
     def remove_consecutive_duplicates(self, list):
 
         new_list = []
@@ -67,18 +81,21 @@ class GUI_Interface:
 
     # Transcribe the audio and return a list of chords
         self.ts.setAudio(self.audio1)
-        chords = self.ts.findChords()
+        chords, segments = self.ts.findChords()
+        self.audio_segments_1 = segments
         chords = self.remove_consecutive_duplicates(chords)
         return chords
 
-    def getComparedSpectrograms(self):
+    def getComparedSpectrogramsAndScore(self):
         
     # Create spectrogram of both audio files and compare them
         self.ap.setAudio(self.audio1)
         spectrogram1 = self.ap.melScaleSpec()
+        self.audio_segments_1 = self.ts.chop_audio(self.ap.getAudio())
         self.ap.setAudio(self.audio2)
         spectrogram2 = self.ap.melScaleSpec()
-        
+        self.audio_segments_2 = self.ts.chop_audio(self.ap.getAudio())
+
         # Determine the maximum length along the second axis
         max_length = max(spectrogram1.shape[1], spectrogram2.shape[1])
 
@@ -89,7 +106,18 @@ class GUI_Interface:
         # subtract spectrograms for comparison
         layeredSpectrogram = spectrogram1 - spectrogram2
 
-        return layeredSpectrogram
+        normalized_spec1 = (spectrogram1 - np.mean(spectrogram1)) / np.std(spectrogram1)
+        normalized_spec2 = (spectrogram2 - np.mean(spectrogram2)) / np.std(spectrogram2)
+        
+        # Get the Euclidean distance between the spectrograms
+        distance = cdist(normalized_spec1.T, normalized_spec2.T, 'euclidean')
+
+        # The similarity is equal to the negative sum of the distances
+        similarity = -np.sum(distance)
+
+        score = str(similarity)
+
+        return layeredSpectrogram, score
 
 
     #function to get the score of similarity between spectrograms todo: use more advanced comparison
@@ -117,3 +145,5 @@ class GUI_Interface:
         similarity = -np.sum(distance)
 
         return similarity
+
+

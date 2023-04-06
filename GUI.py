@@ -65,13 +65,13 @@ class GUI(tk.Frame):
 
 
         # Create right frame
-        right_frame = tk.Frame(self.master)
+        right_frame = tk.Frame(self.master,bg = 'light blue')
         
         # Create top of the right frame to hold the radio buttons
         top_right_frame = tk.Frame(right_frame)
         top_right_frame.pack(side='top', fill='x', padx=10, pady=5)
         # Create radio buttons
-        self.play_button = tk.Button(top_right_frame, text="Play Song", command=self.playMusic,fg="white",bg = "lime green")
+        self.play_button = tk.Button(top_right_frame, text="Play Song From Start", command=self.playMusic,fg="white",bg = "lime green")
 
 
         self.audio_selection_label = tk.Label(top_right_frame, text="Choose Audio to Play:", font = ('Times',15))
